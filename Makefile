@@ -2,10 +2,15 @@ SHELL := /bin/bash
 
 SOLUTION    := WorkoutTracker.slnx
 API_PROJECT := src/WorkoutTracker.Api
+DB_PROJECT  := src/WorkoutTracker.Infrastructure
 CONFIG      ?= Debug
 
 ENV_PORT    := $(shell sed -n 's|.*localhost:\([0-9]*\).*|\1|p' .env 2>/dev/null | head -1)
 PORT        ?= $(if $(ENV_PORT),$(ENV_PORT),8080)
+
+EF_ARGS     := --project $(DB_PROJECT) --startup-project $(API_PROJECT)
+MIG_DIR     := Persistence/Migrations
+SQL_OUT     ?= artifacts/migration.sql
 
 CYAN   := \033[36m
 GREEN  := \033[32m
@@ -16,7 +21,7 @@ BOLD   := \033[1m
 RESET  := \033[0m
 
 .DEFAULT_GOAL := help
-.PHONY: help setup env restore build rebuild run watch test format format-check clean ci info outdated
+.PHONY: help setup env restore build rebuild run watch test migration migration-remove sql format format-check clean ci info outdated
 
 help: ## 📖  Show this help
 	@printf "\n  $(BOLD)$(CYAN)WorkoutTracker$(RESET) $(DIM)· .NET 10 web API$(RESET)\n\n"
@@ -63,6 +68,26 @@ test: ## 🧪  Run tests
 		dotnet test $(SOLUTION) -c $(CONFIG) --nologo; \
 		printf "$(GREEN)✅  Tests passed$(RESET)\n"; \
 	fi
+
+migration: ## 🧬  Create a migration: make migration name=AddWorkouts
+	@if [ -z "$(name)" ]; then \
+		printf "$(RED)❌  Usage: make migration name=AddWorkouts$(RESET)\n"; \
+		exit 1; \
+	fi
+	@printf "$(CYAN)🧬  Creating migration $(BOLD)$(name)$(RESET)$(CYAN)…$(RESET)\n"
+	@dotnet ef migrations add $(name) $(EF_ARGS) --output-dir $(MIG_DIR)
+	@printf "$(GREEN)✅  Migration created in $(DB_PROJECT)/$(MIG_DIR) — run 'make sql' next$(RESET)\n"
+
+migration-remove: ## ↩️   Delete the most recent migration
+	@printf "$(YELLOW)↩️   Removing the last migration…$(RESET)\n"
+	@dotnet ef migrations remove $(EF_ARGS)
+	@printf "$(GREEN)✅  Removed$(RESET)\n"
+
+sql: ## 📜  Generate idempotent SQL for the migrations
+	@printf "$(CYAN)📜  Scripting migrations → $(BOLD)$(SQL_OUT)$(RESET)\n"
+	@mkdir -p $(dir $(SQL_OUT))
+	@dotnet ef migrations script --idempotent --output $(SQL_OUT) $(EF_ARGS)
+	@printf "$(GREEN)✅  Written to $(SQL_OUT)$(RESET) $(DIM)(gitignored — apply it by hand, then delete it)$(RESET)\n"
 
 format: ## 🎨  Format code in place
 	@printf "$(CYAN)🎨  Formatting…$(RESET)\n"

@@ -4,4 +4,8 @@
     <ProjectReference Include="..\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
 </Project>
