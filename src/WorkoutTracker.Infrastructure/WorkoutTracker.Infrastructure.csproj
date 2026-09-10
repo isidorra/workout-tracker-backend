@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkoutTracker.Application\WorkoutTracker.Application.csproj" />
+  </ItemGroup>
+
+</Project>
