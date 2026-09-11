@@ -7,6 +7,7 @@ using WorkoutTracker.Application.Common.Interfaces;
 using WorkoutTracker.Application.Features.Auth;
 using WorkoutTracker.Domain.Auth;
 using WorkoutTracker.Domain.Common;
+using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Infrastructure.Authentication;
 using WorkoutTracker.Infrastructure.Identity;
 using WorkoutTracker.Infrastructure.Persistence;
@@ -48,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IWorkoutRepository, WorkoutRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

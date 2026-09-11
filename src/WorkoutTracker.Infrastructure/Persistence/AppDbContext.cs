@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using WorkoutTracker.Domain.Auth;
+using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Infrastructure.Identity;
 
 namespace WorkoutTracker.Infrastructure.Persistence;
@@ -10,6 +11,7 @@ namespace WorkoutTracker.Infrastructure.Persistence;
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUserContext<ApplicationUser, Guid>(options)
 {
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Workout> Workouts => Set<Workout>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

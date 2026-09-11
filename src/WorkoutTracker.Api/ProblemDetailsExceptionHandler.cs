@@ -46,6 +46,12 @@ public sealed class ProblemDetailsExceptionHandler(IProblemDetailsService proble
                 Title = "Unauthorized",
                 Detail = exception.Message
             },
+            NotFoundException => new ProblemDetails
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Not Found",
+                Detail = exception.Message
+            },
             ConflictException => new ProblemDetails
             {
                 Status = StatusCodes.Status409Conflict,
