@@ -6,5 +6,6 @@ public enum WorkoutType
 {
     Cardio = 1,
     Strength = 2,
-    Flexibility = 3
+    Flexibility = 3,
+    Mixed = 4
 }
