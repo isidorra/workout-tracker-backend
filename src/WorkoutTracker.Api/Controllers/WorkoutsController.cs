@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Wolverine;
 
+using WorkoutTracker.Application.Common.Models;
 using WorkoutTracker.Application.Features.Workouts;
 
 namespace WorkoutTracker.Api.Controllers;
@@ -11,9 +12,11 @@ namespace WorkoutTracker.Api.Controllers;
 public sealed class WorkoutsController(IMessageBus bus) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<WorkoutResponse>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResponse<WorkoutResponse>>> GetAll(
+        [FromQuery] GetWorkoutsQuery query,
+        CancellationToken cancellationToken)
     {
-        var workouts = await bus.InvokeAsync<IReadOnlyList<WorkoutResponse>>(new GetWorkoutsQuery(), cancellationToken);
+        var workouts = await bus.InvokeAsync<PagedResponse<WorkoutResponse>>(query, cancellationToken);
 
         return Ok(workouts);
     }

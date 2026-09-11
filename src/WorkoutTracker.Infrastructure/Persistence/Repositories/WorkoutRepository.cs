@@ -11,14 +11,31 @@ public sealed class WorkoutRepository(AppDbContext context) : IWorkoutRepository
         return context.Workouts.SingleOrDefaultAsync(w => w.Id == id && w.UserId == userId, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Workout>> GetByUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<(IReadOnlyList<Workout> Items, int TotalCount)> GetByUserAsync(
+        Guid userId,
+        WorkoutType? type,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
     {
-        return await context.Workouts
+        var filtered = context.Workouts
             .AsNoTracking()
-            .Where(w => w.UserId == userId)
+            .Where(w => w.UserId == userId);
+
+        if (type.HasValue)
+        {
+            filtered = filtered.Where(w => w.Type == type.Value);
+        }
+
+        var totalCount = await filtered.CountAsync(cancellationToken);
+        var items = await filtered
             .OrderByDescending(w => w.PerformedAt)
             .ThenByDescending(w => w.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public void Add(Workout workout)

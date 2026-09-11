@@ -12,4 +12,8 @@ public static class WorkoutPolicy
     public const int MaxCalories = 10000;
 
     public const int MaxNotesLength = 1000;
+
+    public const int DefaultPage = 1;
+    public const int DefaultPageSize = 20;
+    public const int MaxPageSize = 50;
 }
