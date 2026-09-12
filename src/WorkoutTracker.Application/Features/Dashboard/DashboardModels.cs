@@ -14,6 +14,12 @@ public sealed record LastWorkoutSummary(
     DateTime PerformedAt,
     int DurationMinutes);
 
+public sealed record WorkoutStat(
+    DateTime PerformedAt,
+    int DurationMinutes,
+    int Difficulty,
+    int Fatigue);
+
 public sealed record WeekStats(
     int WorkoutCount,
     int TotalDurationMinutes,
@@ -29,7 +35,7 @@ internal static class DashboardCalendar
         return day.AddDays(-daysFromMonday);
     }
 
-    public static WeekStats ToWeekStats(IReadOnlyCollection<Workout> workouts)
+    public static WeekStats ToWeekStats(IReadOnlyCollection<WorkoutStat> workouts)
     {
         var workoutCount = workouts.Count;
 

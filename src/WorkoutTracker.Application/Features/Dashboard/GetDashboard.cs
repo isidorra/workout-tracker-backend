@@ -1,7 +1,6 @@
 using FluentValidation;
 
 using WorkoutTracker.Application.Common.Interfaces;
-using WorkoutTracker.Domain.Workouts;
 
 namespace WorkoutTracker.Application.Features.Dashboard;
 
@@ -34,7 +33,7 @@ public static class GetDashboardHandler
     public static async Task<DashboardResponse> Handle(
         GetDashboardQuery query,
         ICurrentUser currentUser,
-        IWorkoutRepository workoutRepository,
+        IWorkoutReadQueries workoutReadQueries,
         CancellationToken cancellationToken)
     {
         var weekStart = DashboardCalendar.StartOfWeek(query.Today);
@@ -45,10 +44,10 @@ public static class GetDashboardHandler
         var todayStart = query.Today.ToDateTime(TimeOnly.MinValue);
         var todayEndExclusive = query.Today.AddDays(1).ToDateTime(TimeOnly.MinValue);
 
-        var lastWorkout = await workoutRepository.GetLastByUserAsync(
+        var lastWorkout = await workoutReadQueries.GetLastByUserAsync(
             currentUser.UserId,
             cancellationToken);
-        var weekWorkouts = await workoutRepository.GetByUserInRangeAsync(
+        var weekWorkouts = await workoutReadQueries.GetStatsByUserInRangeAsync(
             currentUser.UserId,
             weekStartAt,
             weekEndExclusive,
@@ -57,20 +56,12 @@ public static class GetDashboardHandler
         var hasWorkoutToday = weekWorkouts.Any(workout =>
             workout.PerformedAt >= todayStart && workout.PerformedAt < todayEndExclusive);
 
-        LastWorkoutSummary lastSummary = lastWorkout is null
-            ? null
-            : new LastWorkoutSummary(
-                lastWorkout.Id,
-                lastWorkout.Type,
-                lastWorkout.PerformedAt,
-                lastWorkout.DurationMinutes);
-
         return new DashboardResponse(
             query.Today,
             weekStart,
             weekEnd,
             hasWorkoutToday,
-            lastSummary,
+            lastWorkout,
             DashboardCalendar.ToWeekStats(weekWorkouts));
     }
 }

@@ -1,7 +1,6 @@
 using FluentValidation;
 
 using WorkoutTracker.Application.Common.Interfaces;
-using WorkoutTracker.Domain.Workouts;
 
 namespace WorkoutTracker.Application.Features.Dashboard;
 
@@ -42,7 +41,7 @@ public static class GetDashboardProgressHandler
     public static async Task<DashboardProgressResponse> Handle(
         GetDashboardProgressQuery query,
         ICurrentUser currentUser,
-        IWorkoutRepository workoutRepository,
+        IWorkoutReadQueries workoutReadQueries,
         CancellationToken cancellationToken)
     {
         var monthStart = new DateOnly(query.Year, query.Month, 1);
@@ -51,7 +50,7 @@ public static class GetDashboardProgressHandler
         var lastMonday = DashboardCalendar.StartOfWeek(monthEnd);
         var lastSunday = lastMonday.AddDays(6);
 
-        var workouts = await workoutRepository.GetByUserInRangeAsync(
+        var workouts = await workoutReadQueries.GetStatsByUserInRangeAsync(
             currentUser.UserId,
             firstMonday.ToDateTime(TimeOnly.MinValue),
             lastSunday.AddDays(1).ToDateTime(TimeOnly.MinValue),
@@ -59,14 +58,14 @@ public static class GetDashboardProgressHandler
 
         var workoutsByWeek = workouts
             .GroupBy(workout => DashboardCalendar.StartOfWeek(DateOnly.FromDateTime(workout.PerformedAt)))
-            .ToDictionary(group => group.Key, group => (IReadOnlyCollection<Workout>)group.ToList());
+            .ToDictionary(group => group.Key, group => (IReadOnlyCollection<WorkoutStat>)group.ToList());
 
         var weeks = new List<ProgressWeek>();
 
         for (var weekStart = firstMonday; weekStart <= lastMonday; weekStart = weekStart.AddDays(7))
         {
             var weekEnd = weekStart.AddDays(6);
-            var weekWorkouts = workoutsByWeek.GetValueOrDefault(weekStart, Array.Empty<Workout>());
+            var weekWorkouts = workoutsByWeek.GetValueOrDefault(weekStart, Array.Empty<WorkoutStat>());
             var stats = DashboardCalendar.ToWeekStats(weekWorkouts);
 
             weeks.Add(new ProgressWeek(

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using WorkoutTracker.Application.Common.Interfaces;
 using WorkoutTracker.Application.Features.Auth;
+using WorkoutTracker.Application.Features.Dashboard;
 using WorkoutTracker.Domain.Auth;
 using WorkoutTracker.Domain.Common;
 using WorkoutTracker.Domain.Workouts;
@@ -50,6 +51,7 @@ public static class DependencyInjection
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+        services.AddScoped<IWorkoutReadQueries, WorkoutReadQueries>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

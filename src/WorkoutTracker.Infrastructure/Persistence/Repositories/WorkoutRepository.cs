@@ -38,31 +38,6 @@ public sealed class WorkoutRepository(AppDbContext context) : IWorkoutRepository
         return (items, totalCount);
     }
 
-    public Task<Workout> GetLastByUserAsync(Guid userId, CancellationToken cancellationToken = default)
-    {
-        return context.Workouts
-            .AsNoTracking()
-            .Where(w => w.UserId == userId)
-            .OrderByDescending(w => w.PerformedAt)
-            .ThenByDescending(w => w.CreatedAt)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task<IReadOnlyList<Workout>> GetByUserInRangeAsync(
-        Guid userId,
-        DateTime fromInclusive,
-        DateTime toExclusive,
-        CancellationToken cancellationToken = default)
-    {
-        return await context.Workouts
-            .AsNoTracking()
-            .Where(w =>
-                w.UserId == userId &&
-                w.PerformedAt >= fromInclusive &&
-                w.PerformedAt < toExclusive)
-            .ToListAsync(cancellationToken);
-    }
-
     public void Add(Workout workout)
     {
         context.Workouts.Add(workout);

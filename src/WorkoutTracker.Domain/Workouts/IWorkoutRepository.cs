@@ -11,14 +11,6 @@ public interface IWorkoutRepository
         int pageSize,
         CancellationToken cancellationToken = default);
 
-    Task<Workout> GetLastByUserAsync(Guid userId, CancellationToken cancellationToken = default);
-
-    Task<IReadOnlyList<Workout>> GetByUserInRangeAsync(
-        Guid userId,
-        DateTime fromInclusive,
-        DateTime toExclusive,
-        CancellationToken cancellationToken = default);
-
     void Add(Workout workout);
     void Remove(Workout workout);
 }
