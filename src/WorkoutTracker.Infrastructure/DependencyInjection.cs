@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using WorkoutTracker.Application.Common.Interfaces;
-using WorkoutTracker.Application.Features.Auth;
 using WorkoutTracker.Application.Features.Dashboard;
 using WorkoutTracker.Domain.Auth;
 using WorkoutTracker.Domain.Common;

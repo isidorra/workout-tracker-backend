@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using WorkoutTracker.Application.Features.Workouts;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Infrastructure.Identity;
 
@@ -21,7 +20,7 @@ public sealed class WorkoutConfiguration : IEntityTypeConfiguration<Workout>
             .HasColumnType("timestamp without time zone");
 
         builder.Property(w => w.Notes)
-            .HasMaxLength(WorkoutPolicy.MaxNotesLength);
+            .HasMaxLength(WorkoutConstraints.MaxNotesLength);
 
         builder.HasIndex(w => new { w.UserId, w.PerformedAt });
 
@@ -31,12 +30,15 @@ public sealed class WorkoutConfiguration : IEntityTypeConfiguration<Workout>
             .OnDelete(DeleteBehavior.Cascade);
 
         // The snake_case naming convention does not rename check constraints, so names and SQL use column names.
+        var allowedTypes = string.Join(", ", Enum.GetValues<WorkoutType>().Cast<int>());
+
         builder.ToTable(t =>
         {
             t.HasCheckConstraint("ck_workouts_duration_minutes", "duration_minutes > 0");
             t.HasCheckConstraint("ck_workouts_calories", "calories >= 0");
             t.HasCheckConstraint("ck_workouts_difficulty", "difficulty BETWEEN 1 AND 10");
             t.HasCheckConstraint("ck_workouts_fatigue", "fatigue BETWEEN 1 AND 10");
+            t.HasCheckConstraint("ck_workouts_type", $"type IN ({allowedTypes})");
         });
     }
 }

@@ -1,4 +1,4 @@
-namespace WorkoutTracker.Application.Features.Auth;
+namespace WorkoutTracker.Domain.Auth;
 
 public static class PasswordPolicy
 {

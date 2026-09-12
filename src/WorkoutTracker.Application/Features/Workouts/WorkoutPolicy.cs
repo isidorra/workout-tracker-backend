@@ -1,3 +1,5 @@
+using WorkoutTracker.Domain.Workouts;
+
 namespace WorkoutTracker.Application.Features.Workouts;
 
 public static class WorkoutPolicy
@@ -11,7 +13,7 @@ public static class WorkoutPolicy
     public const int MinCalories = 0;
     public const int MaxCalories = 10000;
 
-    public const int MaxNotesLength = 1000;
+    public const int MaxNotesLength = WorkoutConstraints.MaxNotesLength;
 
     public const int DefaultPage = 1;
     public const int DefaultPageSize = 20;
