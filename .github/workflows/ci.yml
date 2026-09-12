@@ -24,3 +24,4 @@ jobs:
 
       - run: dotnet restore WorkoutTracker.slnx
       - run: dotnet build WorkoutTracker.slnx --no-restore --configuration Release
+      - run: dotnet test WorkoutTracker.slnx --no-build --configuration Release

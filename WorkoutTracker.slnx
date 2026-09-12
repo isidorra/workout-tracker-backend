@@ -5,4 +5,7 @@
     <Project Path="src/WorkoutTracker.Infrastructure/WorkoutTracker.Infrastructure.csproj" />
     <Project Path="src/WorkoutTracker.Api/WorkoutTracker.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WorkoutTracker.Application.Tests/WorkoutTracker.Application.Tests.csproj" />
+  </Folder>
 </Solution>
